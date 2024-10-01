@@ -1,0 +1,40 @@
+.main-menu {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.main-menu h1 {
+  font-size: 3rem;
+}
+
+.main-menu nav {
+  display: flex;
+  flex-direction: column; /* Кнопки будут расположены вертикально */
+  align-items: center;    /* Выравниваем кнопки по центру */
+}
+
+.main-menu button {
+  margin: 10px 0;         /* Отступ между кнопками */
+  padding: 10px 20px;
+  font-size: 16px;
+  width: 50%;             /* Ширина кнопок в процентах от родительского элемента */
+  max-width: 300px;       /* Максимальная ширина для кнопок на больших экранах */
+  min-width: 200px;       /* Минимальная ширина кнопок */
+}
+
+/* Адаптивные стили для маленьких экранов */
+@media (max-width: 600px) {
+  .main-menu h1 {
+    font-size: 2rem;        /* Уменьшаем размер заголовка на маленьких экранах */
+  }
+
+  .main-menu button {
+    width: 80%;             /* На маленьких экранах кнопки занимают 80% ширины */
+    font-size: 14px;        /* Уменьшаем размер шрифта для кнопок */
+    padding: 8px 16px;      /* Уменьшаем внутренние отступы */
+  }
+
+  .main-menu {
+    margin-top: 20px;       /* Уменьшаем верхний отступ на мобильных устройствах */
+  }
+}
