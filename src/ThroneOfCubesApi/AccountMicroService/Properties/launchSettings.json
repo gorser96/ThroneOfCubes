@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "AccountMicroService": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}

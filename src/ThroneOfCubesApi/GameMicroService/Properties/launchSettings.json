@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "GameMicroService": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}
