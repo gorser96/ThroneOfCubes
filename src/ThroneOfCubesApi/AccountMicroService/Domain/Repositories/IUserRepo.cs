@@ -5,5 +5,5 @@ namespace AccountMicroService.Domain.Repositories;
 public interface IUserRepo
 {
     User? Find(Guid uid);
-    User Create(Guid uid, string username);
+    User Create(Guid uid, string username, string passwordHash);
 }

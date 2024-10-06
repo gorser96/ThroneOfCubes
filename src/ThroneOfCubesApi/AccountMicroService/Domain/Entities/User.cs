@@ -5,16 +5,20 @@ namespace AccountMicroService.Domain.Entities;
 
 public class User : IEntity
 {
-    private readonly List<INotification> _domainEvents = new List<INotification>();
+    private readonly List<INotification> _domainEvents = new();
 
-    public User(Guid uid, string username)
+    public User(Guid uid, string username, string passwordHash)
     {
         Uid = uid;
         Username = username;
+        PasswordHash = passwordHash;
+        Role = Roles.User;
     }
 
     public Guid Uid { get; init; }
     public string Username { get; private set; }
+    public string PasswordHash { get; private set; }
+    public string Role { get; private set; }
 
     public IReadOnlyCollection<INotification> DomainEvents => _domainEvents;
 
@@ -29,6 +33,7 @@ public class User : IEntity
         {
             Username = Username,
             Uid = Uid,
+            Role = Role,
         };
     }
 }

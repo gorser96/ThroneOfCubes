@@ -6,9 +6,9 @@ namespace AccountMicroService.Infrastructure.Repositories;
 
 internal class UserRepo(AccountDbContext dbContext) : IUserRepo
 {
-    public User Create(Guid uid, string username)
+    public User Create(Guid uid, string username, string passwordHash)
     {
-        return dbContext.Users.Add(new(uid, username)).Entity;
+        return dbContext.Users.Add(new(uid, username, passwordHash)).Entity;
     }
 
     public User? Find(Guid uid)

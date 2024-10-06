@@ -1,16 +1,26 @@
-﻿using AccountMicroService.Application.Models;
-using AccountMicroService.Application.Queries;
+﻿using AccountMicroService.Application.Commands;
+using AccountMicroService.Application.Models;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AccountMicroService.API;
 
 [ApiController]
 [Route("[controller]")]
-internal class UserController(UserQueries userQueries) : ControllerBase
+internal class UserController(
+    IMediator mediator) : ControllerBase
 {
-    [HttpGet("{userUid:guid}")]
-    public UserViewModel? GetUser(Guid userUid)
+    [HttpPost("/login")]
+    public async Task<IActionResult> Login([FromBody] LoginModel loginModel)
     {
-        return userQueries.FindUser(userUid);
+        var jwt = await mediator.Send(new LoginUserCommand(loginModel));
+        return Ok(new { jwt });
+    }
+
+    [HttpPost("/register")]
+    public async Task<IActionResult> Register([FromBody] RegisterModel registerModel)
+    {
+        var jwt = await mediator.Send(new CreateUserCommand(registerModel));
+        return Ok(new { jwt });
     }
 }
