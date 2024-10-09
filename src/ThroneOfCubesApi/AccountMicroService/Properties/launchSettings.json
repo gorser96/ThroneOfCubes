@@ -1,7 +1,10 @@
 {
   "profiles": {
     "AccountMicroService": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "environmentVariables": {
+        "ConnectionString": "pgsql://localhost:5432"
+      }
     },
     "Container (Dockerfile)": {
       "commandName": "Docker"
