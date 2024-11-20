@@ -1,14 +1,13 @@
-import React, { useState } from 'react';
-import { loginUser, LoginData } from '../../services/api/authService';
-import { useAuth } from '../../contexts/AuthContext';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../contexts/AuthContext';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false); // Добавляем состояние для загрузки
-  const { login } = useAuth();
+  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const validateForm = () => {
@@ -30,12 +29,9 @@ const Login = () => {
       return;
     }
 
-    const loginData: LoginData = { username, password };
-
     try {
       setIsLoading(true); // Устанавливаем загрузку в true
-      const userData = await loginUser(loginData);
-      login(userData); // Авторизация
+      await login(username, password);
       setIsLoading(false);
       navigate('/'); // Перенаправление на главное меню
     } catch (error: any) {

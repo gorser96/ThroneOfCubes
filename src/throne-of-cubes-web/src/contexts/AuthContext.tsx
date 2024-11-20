@@ -1,58 +1,51 @@
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { createContext, ReactNode, useEffect, useState } from 'react';
+import { getToken, loginUser } from '../services/api/authService';
 
 export interface User {
   id: number;
   username: string;
 }
 
-interface AuthContextType {
-  isAuthenticated: boolean;
+interface AuthContextProps {
   user: User | null;
-  login: (userData: User) => void;
+  isAuthenticated: boolean;
+  login: (username: string, password: string) => Promise<void>;
   logout: () => void;
-  isLoading: boolean; // Добавляем флаг загрузки
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth должен использоваться внутри AuthProvider');
-  }
-  return context;
-};
+export const AuthContext = createContext<AuthContextProps>({
+  user: null,
+  isAuthenticated: false,
+  login: async () => {},
+  logout: () => {},
+});
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true); // Состояние для отслеживания загрузки
 
-  // Восстанавливаем состояние из localStorage при загрузке
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      const userData = JSON.parse(storedUser);
-      setIsAuthenticated(true);
-      setUser(userData);
+    // Проверка токена при загрузке
+    const token = getToken();
+    if (token) {
+      // Для реальной проверки можно использовать запрос на сервер
+      setUser({ id: 1, username: 'DemoUser' }); // Заменить на реальную логику
     }
-    setIsLoading(false); // Данные восстановлены, отключаем индикатор загрузки
   }, []);
 
-  const login = (userData: User) => {
-    setIsAuthenticated(true);
-    setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
+  const login = async (username: string, password: string) => {
+    const user = await loginUser({ username, password });
+    setUser(user);
   };
 
   const logout = () => {
-    setIsAuthenticated(false);
+    localStorage.removeItem('authToken');
     setUser(null);
-    localStorage.removeItem('user');
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout, isLoading }}>
+    <AuthContext.Provider
+      value={{ user, isAuthenticated: !!user, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

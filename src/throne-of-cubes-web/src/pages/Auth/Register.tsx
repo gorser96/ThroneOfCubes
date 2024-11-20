@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { registerUser, RegisterData } from '../../services/api/authService';
+import { AuthContext } from '../../contexts/AuthContext';
 
 const Register = () => {
+  const { login } = useContext(AuthContext);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -33,8 +35,9 @@ const Register = () => {
 
     try {
       await registerUser(registerData);
-      // Здесь можно добавить логику, например, перенаправление на страницу авторизации
-      console.log('Успешная регистрация');
+      // После успешной регистрации выполняем автоматический вход
+      await login(username, password);
+      window.location.href = '/';
     } catch (error: any) {
       setErrors([error.message]);
     }

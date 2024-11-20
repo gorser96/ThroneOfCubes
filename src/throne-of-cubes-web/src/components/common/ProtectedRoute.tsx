@@ -1,18 +1,15 @@
+import { useContext } from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { AuthContext } from '../../contexts/AuthContext';
 
-const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
-  const { isAuthenticated, isLoading } = useAuth();
+interface ProtectedRouteProps {
+  children: JSX.Element;
+}
 
-  if (isLoading) {
-    return <div>Загрузка...</div>; // Показываем индикатор загрузки, пока идет восстановление данных
-  }
+const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+  const { isAuthenticated } = useContext(AuthContext);
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return children;
+  return isAuthenticated ? children : <Navigate to="/login" />;
 };
 
 export default ProtectedRoute;
