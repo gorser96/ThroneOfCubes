@@ -6,21 +6,21 @@ using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace AccountMicroService.API;
+namespace AccountMicroService.Controllers;
 
 [ApiController]
-[Route("[controller]")]
-internal class AccountController(
+[Route("account")]
+public class AccountController(
     IMediator mediator, JwtTokenValidationService jwtTokenValidationService) : ControllerBase
 {
-    [HttpPost("/login")]
+    [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginModel loginModel)
     {
         var jwt = await mediator.Send(new LoginUserCommand(loginModel));
         return Ok(new JwtResponse { Token = jwt });
     }
 
-    [HttpPost("/register")]
+    [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterModel registerModel)
     {
         var jwt = await mediator.Send(new CreateUserCommand(registerModel));

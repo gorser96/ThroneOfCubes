@@ -1,5 +1,7 @@
 import { User } from '../../contexts/AuthContext';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export interface RegisterData {
   username: string;
   password: string;
@@ -22,7 +24,7 @@ export const getToken = () => {
 };
 
 export const registerUser = async (data: RegisterData) => {
-  const response = await fetch('/api/register', {
+  const response = await fetch(`${API_BASE_URL}/account/register`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -38,7 +40,7 @@ export const registerUser = async (data: RegisterData) => {
 };
 
 export const loginUser = async (data: LoginData): Promise<User> => {
-  const response = await fetch('/api/login', {
+  const response = await fetch(`${API_BASE_URL}/account/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

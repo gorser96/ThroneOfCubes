@@ -1,10 +1,11 @@
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { AuthContext } from '../../contexts/AuthContext';
 import './MainMenu.css'; // Импортируем CSS файл
+import { useContext } from 'react';
 
 const MainMenu = () => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { logout, user } = useContext(AuthContext);
 
   const handleCreateLobby = () => {
     // Логика для создания лобби

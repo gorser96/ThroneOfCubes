@@ -1,3 +1,5 @@
+using ThroneOfCubesApi.Application.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -11,7 +13,11 @@ builder.Services.AddHttpClient("Account", opt =>
     opt.BaseAddress = new Uri("http://localhost:5010/");
 });
 
+builder.Services.AddScoped<AccountService>();
+
 var app = builder.Build();
+
+app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

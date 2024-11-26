@@ -1,7 +1,9 @@
 import * as signalR from '@microsoft/signalr';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const connection = new signalR.HubConnectionBuilder()
-  .withUrl("https://localhost:5001/gameHub")
+  .withUrl(`${API_BASE_URL}/gameHub`)
   .build();
 
 connection.start().then(() => {
