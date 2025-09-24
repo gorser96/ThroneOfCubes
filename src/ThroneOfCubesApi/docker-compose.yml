@@ -1,0 +1,90 @@
+services:
+  users-db:
+    image: postgres:16
+    container_name: users-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: usersdb
+    volumes:
+      - users_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d usersdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  lobby-db:
+    image: postgres:16
+    container_name: lobby-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: lobbydb
+    volumes:
+      - lobby_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d lobbydb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  accountmicroservice:
+    image: ${DOCKER_REGISTRY-}accountmicroservice
+    build:
+      context: .
+      dockerfile: AccountMicroService/Dockerfile
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__Postgres: Host=users-db;Port=5432;Database=usersdb;Username=postgres;Password=postgres
+    depends_on:
+      users-db:
+        condition: service_healthy
+    expose:
+      - "8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl --silent --fail http://localhost:8080/healthz || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  lobbymicroservice:
+    image: ${DOCKER_REGISTRY-}lobbymicroservice
+    build:
+      context: .
+      dockerfile: LobbyMicroService/Dockerfile
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__Postgres: Host=lobby-db;Port=5432;Database=lobbydb;Username=postgres;Password=postgres
+      Auth__Authority: http://accountmicroservice:8080
+      Auth__Audience: lobby.api
+      Auth__RequireHttpsMetadata: "false"
+    expose:
+      - "8080"
+    depends_on:
+      lobby-db:
+        condition: service_healthy
+      accountmicroservice:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl --silent --fail http://localhost:8080/healthz || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  gateway:
+    image: nginx:1.27
+    container_name: gateway
+    depends_on:
+      - accountmicroservice
+      - lobbymicroservice
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+
+volumes:
+  lobby_db_data:
+  users_db_data:
